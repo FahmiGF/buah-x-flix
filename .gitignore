@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# frontend build
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# runtime data
+media-library/
+.runtime/
+.env
+.env.local
+*.log
+
+# test artefacts
+coverage/
+.playwright/
+.media/
+
+# editors / OS
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,58 @@
+name: universal-video-hub
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: uvh-postgres
+    environment:
+      POSTGRES_USER: uvh
+      POSTGRES_PASSWORD: uvh
+      POSTGRES_DB: uvh
+    ports:
+      # 5432 is commonly taken by a local Postgres; 55432 keeps this project isolated.
+      - "55432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uvh -d uvh"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    container_name: uvh-redis
+    command: ["redis-server", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  # Optional fully-containerised API. Day-to-day development runs the API with uv.
+  api:
+    profiles: ["full"]
+    build:
+      context: ../services/api
+    container_name: uvh-api
+    environment:
+      ENV: development
+      DATABASE_URL: postgresql+asyncpg://uvh:uvh@postgres:5432/uvh
+      REDIS_URL: redis://redis:6379/0
+      MEDIA_ROOT: /data/media
+      COOKIE_SECURE: "false"
+    ports:
+      - "8000:8000"
+    volumes:
+      - media:/data/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  media:

@@ -1,0 +1,15 @@
+{
+  "name": "universal-video-hub",
+  "private": true,
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:finder": "pnpm --filter @uvh/video-finder dev",
+    "dev:netflix": "pnpm --filter @uvh/my-netflix dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  }
+}
